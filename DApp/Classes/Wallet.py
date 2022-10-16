@@ -4,8 +4,8 @@ import asyncio
 
 class Wallet:
     # Contract infos
-    contract_address = ''
-    contract_ABI = ''
+    contract_address = '0x054a49AB33d9520F03593b7c9b5abb24BbbECBA1'
+    contract_ABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" } ]'
 
     def __init__(self, wallet_address, private_key):
         self.wallet_address = wallet_address
@@ -14,6 +14,7 @@ class Wallet:
         self.nonce = self.__configure_nonce()
         self.contract = self.__create_contract()
         self.student = None
+        self.loop = False
 
     @staticmethod
     def __configure_infura():
@@ -44,16 +45,19 @@ class Wallet:
 
     def handle_event(self, event):
         self.student = self.contract.functions.requestData().call()
+        self.loop = False
 
     async def __log_loop(self, event_filter, poll_interval):
-        while True:
+        self.loop = True
+        while self.loop is True:
             for PairCreated in event_filter.get_new_entries():
                 self.handle_event(PairCreated)
             await asyncio.sleep(poll_interval)
 
     def __wait_for_answer(self):
         event_filter = self.contract.events.dataReadyEvent.createFilter(fromBlock='latest')
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         try:
             loop.run_until_complete(
                 asyncio.gather(
