@@ -5,7 +5,22 @@ import asyncio
 class Wallet:
     # Contract infos
     contract_address = '0x054a49AB33d9520F03593b7c9b5abb24BbbECBA1'
-    contract_ABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" } ]'
+    contract_ABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, ' \
+                   '"inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { ' \
+                   '"indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
+                   '"name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", ' \
+                   '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
+                   '"name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", ' \
+                   '"type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "id", ' \
+                   '"type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, ' \
+                   '{ "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct ' \
+                   'StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "name": "setData", ' \
+                   '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
+                   '"name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "id", ' \
+                   '"type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, ' \
+                   '{ "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct ' \
+                   'StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", ' \
+                   '"type": "function" } ] '
 
     def __init__(self, wallet_address, private_key):
         self.wallet_address = wallet_address
@@ -44,8 +59,9 @@ class Wallet:
         self.w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
 
     def handle_event(self, event):
-        self.student = self.contract.functions.requestData().call()
-        self.loop = False
+        if event.args['adr'] == self.wallet_address:
+            self.student = self.contract.functions.requestData().call()
+            self.loop = False
 
     async def __log_loop(self, event_filter, poll_interval):
         self.loop = True
