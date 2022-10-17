@@ -4,53 +4,31 @@ import asyncio
 
 class Wallet:
     # Contract infos
-    contract_address = '0x054a49AB33d9520F03593b7c9b5abb24BbbECBA1'
-    contract_ABI = '[ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, ' \
-                   '"inputs": [], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { ' \
-                   '"indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
-                   '"name": "dataRequestEvent", "type": "event" }, { "inputs": [], "name": "emitDataReadyEvent", ' \
-                   '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
-                   '"name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", ' \
-                   '"type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "id", ' \
-                   '"type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, ' \
-                   '{ "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct ' \
-                   'StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "name": "setData", ' \
-                   '"outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
-                   '"name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "id", ' \
-                   '"type": "string" }, { "internalType": "string", "name": "name", "type": "string" }, ' \
-                   '{ "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct ' \
-                   'StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", ' \
-                   '"type": "function" } ] '
+    contract_address = '0x3c7E440Ff39229ba719C38b30fc9C197243f53FD'
+    contract_ABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], "name": "dataRequestEvent", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "emitDataReadyEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" }, { "internalType": "address", "name": "adr", "type": "address" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" } ], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "students", "outputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "surname", "type": "string" } ], "stateMutability": "view", "type": "function" } ]'
 
-    def __init__(self, wallet_address, private_key):
-        self.wallet_address = wallet_address
+    def __init__(self, private_key):
+        self.__configure_infura()
         self.private_key = private_key
-        self.w3 = Wallet.__configure_infura()
-        self.nonce = self.__configure_nonce()
+        self.wallet_address = self.w3.eth.account.from_key(private_key).address
         self.contract = self.__create_contract()
         self.student = None
-        self.loop = False
+        self.loop = False   # Useful to stop loop when data is received
 
-    @staticmethod
-    def __configure_infura():
-        w3 = Web3(Web3.HTTPProvider("https://goerli.infura.io/v3/a2d3ce8effcf445b8fea9dad109c9150"))
-        if not w3.isConnected():
+    def __configure_infura(self):
+        self.w3 = Web3(Web3.HTTPProvider("https://goerli.infura.io/v3/a2d3ce8effcf445b8fea9dad109c9150"))
+        if not self.w3.isConnected():
             raise ConnectionError("La connessione al nodo Infura è fallita")
-        return w3
-
-    def __configure_nonce(self):
-        try:
-            nonce = self.w3.eth.getTransactionCount(self.wallet_address)
-        except:
-            raise "L'indirizzo del wallet non è valido"
-        return nonce
+        return self.w3
 
     def __create_contract(self):
         return self.w3.eth.contract(address=self.contract_address, abi=self.contract_ABI)
 
     def __send_transaction(self):
+        nonce = self.w3.eth.getTransactionCount(self.wallet_address)
+
         transaction = self.contract.functions.emitDataRequestEvent().buildTransaction(
-            {"chainId": 5, "from": self.wallet_address, "nonce": self.nonce})
+            {"chainId": 5, "from": self.wallet_address, "nonce": nonce})
 
         # Sign transaction
         signed_transaction = self.w3.eth.account.sign_transaction(transaction, private_key=self.private_key)
@@ -60,7 +38,7 @@ class Wallet:
 
     def handle_event(self, event):
         if event.args['adr'] == self.wallet_address:
-            self.student = self.contract.functions.requestData().call()
+            self.student = self.contract.functions.requestData(self.wallet_address).call()
             self.loop = False
 
     async def __log_loop(self, event_filter, poll_interval):
