@@ -13,11 +13,18 @@
         <p><span><b>Cognome:</b></span> {{ wallet.student.1 }} </p>
         <br>
         <br>
-        <h1>Carriere</h1>
-        {% for student in wallet.student.2%}
-            <p><span><b>Matricola:</b></span> {{ student.0 }}</p>
-            <p><span><b>Corso di studio:</b></span> {{ student.1 }}</p>
-            <p><span><b>Completata:</b></span> {% if student.2 == 0 %} No {% else %} Sì {% endif %}
+        <h3>Carriere</h3>
+        {% for career in wallet.student.2 %}
+            <p><span><b>Matricola:</b></span> {{ career.0 }}</p>
+            <p><span><b>Corso di studio:</b></span> {{ career.1 }}</p>
+            <p><span><b>Completata:</b></span> {% if career.2 == 0 %} No {% else %} Sì {% endif %}
+            <br>
+            <h5>Esami:</h5>
+            {% for exam in career.3 %}
+                <p><span><b>Insegnamento:</b> {{ exam.2 }}</span></p>
+                <p><span><b>Voto:</b></span> {{ exam.0 }}</p>
+                <p><span><b>Data:</b></span> {{ exam.1 }}</p>
+            {% endfor %}
             <br>
         {% endfor %}
 
