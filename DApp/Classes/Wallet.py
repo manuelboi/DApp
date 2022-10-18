@@ -5,7 +5,7 @@ import datetime
 
 class Wallet:
     # Contract infos
-    contract_address = '0x9192085ab0E99cfAA9d4628dB566587Cc912d462'
+    contract_address = '0x0591D6A9543021E1B6C05e8b001B58d4d58CE6bc'
     contract_ABI = '[ { "anonymous": false, "inputs": [ { "indexed": false, "internalType": "address", "name": "adr", ' \
                    '"type": "address" } ], "name": "dataReadyEvent", "type": "event" }, { "anonymous": false, ' \
                    '"inputs": [ { "indexed": false, "internalType": "address", "name": "adr", "type": "address" } ], ' \
@@ -13,21 +13,20 @@ class Wallet:
                    '"name": "adr", "type": "address" } ], "name": "emitDataReadyEvent", "outputs": [], ' \
                    '"stateMutability": "nonpayable", "type": "function" }, { "inputs": [], ' \
                    '"name": "emitDataRequestEvent", "outputs": [], "stateMutability": "nonpayable", ' \
-                   '"type": "function" }, { "inputs": [ { "components": [ { "internalType": "string", "name": "name", ' \
-                   '"type": "string" }, { "internalType": "string", "name": "surname", "type": "string" }, ' \
-                   '{ "components": [ { "internalType": "string", "name": "id", "type": "string" }, { "internalType": ' \
-                   '"string", "name": "studyCourse", "type": "string" }, { "internalType": "int256", ' \
-                   '"name": "completed", "type": "int256" }, { "components": [ { "internalType": "int256", ' \
+                   '"type": "function" }, { "inputs": [ { "internalType": "address", "name": "adr", "type": "address" ' \
+                   '} ], "name": "requestData", "outputs": [ { "components": [ { "internalType": "string", ' \
+                   '"name": "name", "type": "string" }, { "internalType": "string", "name": "surname", ' \
+                   '"type": "string" }, { "components": [ { "internalType": "string", "name": "id", "type": "string" ' \
+                   '}, { "internalType": "string", "name": "studyCourse", "type": "string" }, { "internalType": ' \
+                   '"int256", "name": "completed", "type": "int256" }, { "components": [ { "internalType": "int256", ' \
                    '"name": "mark", "type": "int256" }, { "internalType": "uint256", "name": "date", ' \
                    '"type": "uint256" }, { "internalType": "string", "name": "teaching", "type": "string" } ], ' \
                    '"internalType": "struct StudentCurriculum.Exam[]", "name": "exams", "type": "tuple[]" } ], ' \
                    '"internalType": "struct StudentCurriculum.Career[]", "name": "careers", "type": "tuple[]" } ], ' \
-                   '"internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" }, ' \
-                   '{ "internalType": "address", "name": "adr", "type": "address" } ], "name": "setData", "outputs": ' \
-                   '[], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": ' \
-                   '"address", "name": "adr", "type": "address" } ], "name": "requestData", "outputs": [ { ' \
-                   '"components": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": ' \
-                   '"string", "name": "surname", "type": "string" }, { "components": [ { "internalType": "string", ' \
+                   '"internalType": "struct StudentCurriculum.Student", "name": "student", "type": "tuple" } ], ' \
+                   '"stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "components": [ { ' \
+                   '"internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", ' \
+                   '"name": "surname", "type": "string" }, { "components": [ { "internalType": "string", ' \
                    '"name": "id", "type": "string" }, { "internalType": "string", "name": "studyCourse", ' \
                    '"type": "string" }, { "internalType": "int256", "name": "completed", "type": "int256" }, ' \
                    '{ "components": [ { "internalType": "int256", "name": "mark", "type": "int256" }, ' \
@@ -35,11 +34,12 @@ class Wallet:
                    '"name": "teaching", "type": "string" } ], "internalType": "struct StudentCurriculum.Exam[]", ' \
                    '"name": "exams", "type": "tuple[]" } ], "internalType": "struct StudentCurriculum.Career[]", ' \
                    '"name": "careers", "type": "tuple[]" } ], "internalType": "struct StudentCurriculum.Student", ' \
-                   '"name": "student", "type": "tuple" } ], "stateMutability": "view", "type": "function" }, ' \
-                   '{ "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "students", ' \
-                   '"outputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": ' \
-                   '"string", "name": "surname", "type": "string" } ], "stateMutability": "view", "type": "function" ' \
-                   '} ] '
+                   '"name": "student", "type": "tuple" }, { "internalType": "address", "name": "adr", ' \
+                   '"type": "address" } ], "name": "setData", "outputs": [], "stateMutability": "nonpayable", ' \
+                   '"type": "function" }, { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ' \
+                   '], "name": "students", "outputs": [ { "internalType": "string", "name": "name", "type": "string" ' \
+                   '}, { "internalType": "string", "name": "surname", "type": "string" } ], "stateMutability": ' \
+                   '"view", "type": "function" } ] '
 
     def __init__(self, private_key):
         self.__configure_infura()
