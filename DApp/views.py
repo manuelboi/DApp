@@ -8,7 +8,6 @@ def homepage(request):
     if request.method == "POST":
         insert_data_form = InsertDataForm(request.POST)
         if insert_data_form.is_valid():
-            # wallet_address = insert_data_form.cleaned_data['wallet_address']
             private_key = insert_data_form.cleaned_data['private_key']
             wallet = Wallet(private_key)
             wallet.request_data()
