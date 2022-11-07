@@ -8,8 +8,8 @@ def homepage(request):
     if request.method == "POST":
         insert_data_form = InsertDataForm(request.POST)
         if insert_data_form.is_valid():
-            private_key = insert_data_form.cleaned_data['private_key']
-            wallet = Wallet(private_key)
+            decryption_key = insert_data_form.cleaned_data['decryption_key']
+            wallet = Wallet(decryption_key)
             wallet.request_data()
             return render(request, "showData.html", {"wallet": wallet})
         else:

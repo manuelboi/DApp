@@ -1,6 +1,7 @@
 from web3 import Web3
 import asyncio
 import datetime
+from cryptography.fernet import Fernet
 
 
 class Wallet:
@@ -37,13 +38,19 @@ class Wallet:
                    '"name": "adr", "type": "address" } ], "name": "setData", "outputs": [], "stateMutability": ' \
                    '"nonpayable", "type": "function" } ] '
 
-    def __init__(self, private_key):
+    def __init__(self, decryption_key):
+        self.__get_private_key(decryption_key)
         self.__configure_infura()
-        self.private_key = private_key
-        self.wallet_address = self.w3.eth.account.from_key(private_key).address
+        self.wallet_address = self.w3.eth.account.from_key(self.private_key).address
         self.contract = self.__create_contract()
         self.student = None
         self.loop = False  # Used to stop loop when data is received
+
+    def __get_private_key(self, decryption_key):
+        fernet = Fernet(decryption_key)
+        with open('privatekey.csv', 'rb') as enc_file:
+            encrypted = enc_file.read()
+        self.private_key = fernet.decrypt(encrypted).decode('utf-8')
 
     def __configure_infura(self):
         self.w3 = Web3(Web3.HTTPProvider("https://goerli.infura.io/v3/a2d3ce8effcf445b8fea9dad109c9150"))
