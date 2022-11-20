@@ -15,35 +15,37 @@
     </head>
 
     <body>
-        <h1>Dati studente</h1>
-        <p><span><b>Nome:</b></span> {{ wallet.student.0 }} </p>
-        <p><span><b>Cognome:</b></span> {{ wallet.student.1 }} </p>
-        <br>
-        <br>
-        <h3>Carriere</h3>
-        {% for career in wallet.student.2 %}
-            <p><span><b>Matricola:</b></span> {{ career.0 }}</p>
-            <p><span><b>Corso di studio:</b></span> {{ career.1 }}</p>
-            <p><span><b>Completata:</b></span> {% if career.2 == 0 %} No {% else %} Sì {% endif %}
+        <div class="ms-3">
+            <h1>Dati studente</h1>
+            <p><span><b>Nome:</b></span> {{ wallet.student.0 }} </p>
+            <p><span><b>Cognome:</b></span> {{ wallet.student.1 }} </p>
             <br>
-            <h5>Esami:</h5>
-                <table>
-                    <tr>
-                        <th>Insegnamento</th>
-                        <th>Voto</th>
-                        <th>Data</th>
-                    </tr>
-                    {% for exam in career.3 %}
+            <br>
+            <h3>Carriere</h3>
+            {% for career in wallet.student.2 %}
+                <p><span><b>Matricola:</b></span> {{ career.0 }}</p>
+                <p><span><b>Corso di studio:</b></span> {{ career.1 }}</p>
+                <p><span><b>Completata:</b></span> {% if career.2 == 0 %} No {% else %} Sì {% endif %}
+                <br>
+                <h5>Esami:</h5>
+                    <table>
                         <tr>
-                            <td>{{ exam.2 }}</td>
-                            <td>{{ exam.0 }}</td>
-                            <td>{{ exam.1 }}</td>
+                            <th>Insegnamento</th>
+                            <th>Voto</th>
+                            <th>Data</th>
                         </tr>
-                    {% endfor %}
-                </table>
-            <br>
-            <br>
-        {% endfor %}
+                        {% for exam in career.3 %}
+                            <tr>
+                                <td>{{ exam.2 }}</td>
+                                <td>{{ exam.0 }}</td>
+                                <td>{{ exam.1.day }}/{{ exam.1.month }}/{{ exam.1.year }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                <br>
+                <br>
+            {% endfor %}
+        </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
